@@ -1,6 +1,7 @@
 import Link from "next/link";
-import TodoAdd from "./_components/TodoAdd";
+// import TodoAdd from "./_components/TodoAdd";
 import SearchForm from "./_components/SearchForm";
+import TodoAdd2 from "./_components/TodoAdd2";
 
 const getTodoList = async (q: string = "") => {
   const response = await fetch(
@@ -33,7 +34,8 @@ export default async function TodosPage({
           <h3>{todo.title}</h3>
         </Link>
       ))}
-      <TodoAdd />
+      {/* <TodoAdd /> */}
+      <TodoAdd2 />
     </div>
   );
 }
