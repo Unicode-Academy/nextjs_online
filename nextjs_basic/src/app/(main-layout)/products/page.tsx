@@ -7,10 +7,9 @@ type SearchParam = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: SearchParam;
+  searchParams: Promise<SearchParam>;
 }) {
   const search = await searchParams;
-
   return (
     <div>
       <h1>Products</h1>

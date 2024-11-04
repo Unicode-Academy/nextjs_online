@@ -3,6 +3,9 @@ import TodoAdd from "./_components/TodoAdd";
 
 const getTodoList = async () => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/todos`);
+  if (!response.ok) {
+    throw new Error("Có lỗi khi lấy dữ liệu /todos");
+  }
   return response.json();
 };
 export type Todo = {

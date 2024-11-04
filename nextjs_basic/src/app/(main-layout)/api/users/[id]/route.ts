@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 type ParamsType = {
-  params: {
-    id: number;
-  };
+  params: Promise<{
+    id: string;
+  }>;
 };
 export const GET = async (request: NextRequest, { params }: ParamsType) => {
   const { id } = await params;

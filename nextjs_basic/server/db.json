@@ -18,5 +18,22 @@
       "completed": false,
       "id": 3
     }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Post 1",
+      "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum magni eos sunt, reiciendis eum dolorem laborum veniam tempore dolore ut sint quae blanditiis magnam? Amet labore facilis fugiat nobis aliquid!"
+    },
+    {
+      "id": 2,
+      "title": "Post 2",
+      "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum magni eos sunt, reiciendis eum dolorem laborum veniam tempore dolore ut sint quae blanditiis magnam? Amet labore facilis fugiat nobis aliquid!"
+    },
+    {
+      "id": 3,
+      "title": "Post 3",
+      "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum magni eos sunt, reiciendis eum dolorem laborum veniam tempore dolore ut sint quae blanditiis magnam? Amet labore facilis fugiat nobis aliquid!"
+    }
   ]
 }
