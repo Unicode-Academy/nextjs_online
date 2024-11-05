@@ -5,7 +5,12 @@ import TodoAdd2 from "./_components/TodoAdd2";
 
 const getTodoList = async (q: string = "") => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/todos?q=${q}`
+    `${process.env.NEXT_PUBLIC_SERVER_API}/todos?q=${q}`,
+    {
+      next: {
+        tags: ["todos"],
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Có lỗi khi lấy dữ liệu /todos");
