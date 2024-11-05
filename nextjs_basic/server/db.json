@@ -3,7 +3,7 @@
     {
       "title": "Learn ReactJS",
       "content": "Demo Learn ReactJS",
-      "completed": false,
+      "completed": true,
       "id": 1
     },
     {
@@ -13,8 +13,8 @@
       "id": 2
     },
     {
-      "title": "Learn JS",
-      "content": "Demo Learn JavaScript",
+      "title": "Learn JS 2",
+      "content": "Demo Learn JavaScript 1",
       "completed": false,
       "id": 3
     }

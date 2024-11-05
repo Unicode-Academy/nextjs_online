@@ -35,9 +35,12 @@ export default async function TodosPage({
       <h1>Todo List: {q}</h1>
       <SearchForm />
       {todoList.map((todo: Todo) => (
-        <Link href={`/todos/${todo.id}`} key={todo.id}>
-          <h3>{todo.title}</h3>
-        </Link>
+        <h3 key={todo.id}>
+          <Link href={`/todos/${todo.id}`}>{todo.title}</Link>
+          <Link className="fs-6 float-end" href={`/todos/edit/${todo.id}`}>
+            Edit
+          </Link>
+        </h3>
       ))}
       {/* <TodoAdd /> */}
       <TodoAdd2 />
