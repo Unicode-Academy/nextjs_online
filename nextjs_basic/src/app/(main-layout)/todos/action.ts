@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 interface Error {
   status?: number;
@@ -84,4 +85,12 @@ export const update = async (formData: FormData) => {
         : "Something went wrong",
     };
   }
+};
+
+export const deleteTodo = async (formData: FormData) => {
+  const id = formData.get("id");
+  await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/todos/${id}`, {
+    method: "DELETE",
+  });
+  redirect("/todos");
 };

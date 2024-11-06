@@ -37,6 +37,12 @@ export default async function TodosPage({
       {todoList.map((todo: Todo) => (
         <h3 key={todo.id}>
           <Link href={`/todos/${todo.id}`}>{todo.title}</Link>
+          <Link
+            className="fs-6 float-end ms-2"
+            href={`/todos/delete/${todo.id}`}
+          >
+            Delete
+          </Link>
           <Link className="fs-6 float-end" href={`/todos/edit/${todo.id}`}>
             Edit
           </Link>

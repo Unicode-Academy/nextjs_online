@@ -1,24 +1,5 @@
 {
-  "todos": [
-    {
-      "title": "Learn ReactJS",
-      "content": "Demo Learn ReactJS",
-      "completed": true,
-      "id": 1
-    },
-    {
-      "title": "Learn NextJS",
-      "content": "Demo Learn NextJS",
-      "completed": false,
-      "id": 2
-    },
-    {
-      "title": "Learn JS 2",
-      "content": "Demo Learn JavaScript 1",
-      "completed": false,
-      "id": 3
-    }
-  ],
+  "todos": [],
   "posts": [
     {
       "id": 1,
