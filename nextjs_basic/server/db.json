@@ -1,5 +1,12 @@
 {
-  "todos": [],
+  "todos": [
+    {
+      "title": "Todo 1",
+      "content": "Content 1",
+      "completed": false,
+      "id": 1
+    }
+  ],
   "posts": [
     {
       "id": 1,

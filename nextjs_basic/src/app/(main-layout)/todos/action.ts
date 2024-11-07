@@ -7,7 +7,13 @@ interface Error {
   status?: number;
   message?: string;
 }
-export const create = async (formData: FormData) => {
+export const create = async (
+  prevState: {
+    success: boolean;
+    message: string | undefined;
+  },
+  formData: FormData
+) => {
   try {
     const title = formData.get("title");
     const content = formData.get("content");
