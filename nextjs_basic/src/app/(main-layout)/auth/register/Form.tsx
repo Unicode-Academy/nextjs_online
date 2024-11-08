@@ -1,6 +1,6 @@
 "use client";
 import { useActionState } from "react";
-import { handleRegister } from "../action";
+import { handleCancel, handleRegister } from "../action";
 const initialState = {
   message: "",
   success: false,
@@ -87,6 +87,15 @@ export default function Form() {
       <div className="d-grid">
         <button type="submit" className="btn btn-primary" disabled={pending}>
           Register
+        </button>
+        <button
+          type="button"
+          onClick={async () => {
+            const response = await handleCancel("Hoàng An");
+            console.log(response);
+          }}
+        >
+          Cancel
         </button>
       </div>
     </form>

@@ -1,4 +1,5 @@
 "use server";
+import { cookies } from "next/headers";
 import { z } from "zod";
 export const handleRegister = async (
   prevState: {
@@ -56,5 +57,14 @@ export const handleRegister = async (
   return {
     success: false,
     message: "Register unsuccessfully",
+  };
+};
+
+export const handleCancel = async (name: string) => {
+  console.log("Cancel", name);
+  const cookieStore = await cookies();
+  cookieStore.set("name", name, { path: "/", httpOnly: true });
+  return {
+    success: true,
   };
 };
