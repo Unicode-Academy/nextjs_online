@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import useSWR, { mutate } from "swr";
+import PostAdd from "./PostAdd";
 const getPosts = async () => {
   const response = await fetch("http://localhost:3001/posts");
   if (!response.ok) {
@@ -57,6 +58,7 @@ export default function PostList() {
           </h2>
         </div>
       ))}
+      <PostAdd />
     </div>
   );
 }

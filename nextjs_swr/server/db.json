@@ -6,14 +6,9 @@
       "body": "Body 1"
     },
     {
-      "id": 2,
+      "id": "4d7a",
       "title": "Post 2",
-      "body": "Body 2"
-    },
-    {
-      "id": 3,
-      "title": "Post 3",
-      "body": "Body 3"
+      "body": "Content 2"
     }
   ]
 }
