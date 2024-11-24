@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
-const getTodoList = async () => {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/todos`);
+const getTodoList = async (search: string = "") => {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/todos?q=${search}`
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
@@ -20,8 +23,12 @@ const getTodoDetail = async (id: number) => {
   return response.json();
 };
 export default function TodoList() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") ?? "";
   const [todoId, setTodoId] = useState(0);
-  const { data, isLoading, error } = useSWR("/todos", getTodoList);
+  const { data, isLoading, error, mutate } = useSWR("/todos", () =>
+    getTodoList(search)
+  );
   const { data: todoDetail, isLoading: loadingDetail } = useSWR(
     todoId ? `/todos/${todoId}` : null,
     () => getTodoDetail(todoId)
@@ -30,6 +37,10 @@ export default function TodoList() {
   const handleClick = (id: number) => {
     setTodoId(id);
   };
+
+  useEffect(() => {
+    mutate();
+  }, [search, mutate]);
 
   if (isLoading) {
     return <h2>Loading...</h2>;
