@@ -1,14 +1,24 @@
 {
   "posts": [
     {
-      "id": 1,
+      "id": "1",
       "title": "Post 1",
       "body": "Body 1"
     },
     {
-      "id": "4d7a",
+      "id": "32de",
       "title": "Post 2",
       "body": "Content 2"
+    },
+    {
+      "id": "12d8",
+      "title": "Post 3",
+      "body": "Content 3"
+    },
+    {
+      "id": "c8cc",
+      "title": "Post 4",
+      "body": "Content 4"
     }
   ]
 }

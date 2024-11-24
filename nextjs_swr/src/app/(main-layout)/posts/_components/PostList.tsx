@@ -17,16 +17,11 @@ export default function PostList() {
     // mutate,
   } = useSWR("/posts", getPosts, {
     fallbackData: [],
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    // refreshInterval: 1000,
   });
   const handleReload = () => {
-    // mutate(
-    //   (data: { id: number; title: string; body: string }[]) => {
-    //     return [...data, { id: 4, title: "New Post", body: "New Body" }];
-    //   },
-    //   {
-    //     revalidate: false,
-    //   }
-    // );
     mutate(
       "/posts",
       (data: { id: number; title: string; body: string }[] | undefined) => {
