@@ -3,15 +3,17 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-
-const getTodoList = async (search: string = "") => {
+const LIMIT = 20;
+const getTodoList = async (search: string = "", page: number = 1) => {
   const response = await fetch(
-    `https://jsonplaceholder.typicode.com/todos?q=${search}`
+    `https://jsonplaceholder.typicode.com/todos?q=${search}&_page=${page}&_limit=${LIMIT}`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
-  return response.json();
+  const data = await response.json();
+  const count = response.headers.get("x-total-count");
+  return { data, count };
 };
 const getTodoDetail = async (id: number) => {
   const response = await fetch(
@@ -26,8 +28,15 @@ export default function TodoList() {
   const searchParams = useSearchParams();
   const search = searchParams.get("search") ?? "";
   const [todoId, setTodoId] = useState(0);
-  const { data, isLoading, error, mutate } = useSWR("/todos", () =>
-    getTodoList(search)
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const { data, isLoading, error, mutate } = useSWR(
+    "/todos?page=" + currentPage,
+    async () => {
+      const { data, count } = await getTodoList(search, currentPage);
+      setTotalPage(Math.ceil(Number(count) / LIMIT));
+      return data;
+    }
   );
   const { data: todoDetail, isLoading: loadingDetail } = useSWR(
     todoId ? `/todos/${todoId}` : null,
@@ -50,6 +59,7 @@ export default function TodoList() {
   }
   return (
     <div>
+      <h4>Total: {totalPage}</h4>
       {data?.map((todo: { id: number; title: string }) => (
         <h2 key={todo.id}>
           {todo.title}
@@ -59,6 +69,18 @@ export default function TodoList() {
           ) : null}
         </h2>
       ))}
+      <button
+        onClick={() => setCurrentPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        Prev
+      </button>
+      <button
+        onClick={() => setCurrentPage(currentPage + 1)}
+        disabled={currentPage === totalPage}
+      >
+        Next
+      </button>
     </div>
   );
 }
