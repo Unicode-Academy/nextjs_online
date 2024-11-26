@@ -1,9 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-const LIMIT = 20;
+const LIMIT = 3;
 const getTodoList = async (search: string = "", page: number = 1) => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/todos?q=${search}&_page=${page}&_limit=${LIMIT}`
@@ -27,11 +27,13 @@ const getTodoDetail = async (id: number) => {
 export default function TodoList() {
   const searchParams = useSearchParams();
   const search = searchParams.get("search") ?? "";
+  const pageFromUrl = searchParams.get("page");
   const [todoId, setTodoId] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(0);
-  const { data, isLoading, error, mutate } = useSWR(
-    "/todos?page=" + currentPage,
+  const router = useRouter();
+  const { data, isLoading, error } = useSWR(
+    `/todos?search=${search}&page=${currentPage}`,
     async () => {
       const { data, count } = await getTodoList(search, currentPage);
       setTotalPage(Math.ceil(Number(count) / LIMIT));
@@ -48,8 +50,16 @@ export default function TodoList() {
   };
 
   useEffect(() => {
-    mutate();
-  }, [search, mutate]);
+    if (Number(currentPage) === 1 && !search) {
+      router.push(`/todos`);
+    } else {
+      router.push(`/todos?page=${currentPage}&search=${search}`);
+    }
+  }, [currentPage, router, search]);
+
+  useEffect(() => {
+    setCurrentPage(Number(pageFromUrl) || 1);
+  }, [pageFromUrl]);
 
   if (isLoading) {
     return <h2>Loading...</h2>;
@@ -59,7 +69,9 @@ export default function TodoList() {
   }
   return (
     <div>
-      <h4>Total: {totalPage}</h4>
+      <h4>
+        Total: {currentPage} / {totalPage}
+      </h4>
       {data?.map((todo: { id: number; title: string }) => (
         <h2 key={todo.id}>
           {todo.title}
