@@ -33,7 +33,7 @@ const getUser = async (
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  if (!response.ok) {
+  if (response.status === 401) {
     //Call api refresh token
     // const refreshToken = await getRefreshToken();
     if (!refreshToken) {
