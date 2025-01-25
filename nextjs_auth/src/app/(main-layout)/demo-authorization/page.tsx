@@ -1,23 +1,5 @@
 import { FetchWrapper } from "@/app/utils/fetch-wrapper";
 import Link from "next/link";
-// import RefreshToken from "../_components/RefreshToken";
-// import { getToken } from "@/app/utils/auth";
-// import RefreshToken from "../_components/RefreshToken";
-// const getUser = async () => {
-//   const accessToken = await getToken();
-//   const response = await fetch(
-//     `${process.env.NEXT_PUBLIC_SERVER_AUTH_API}/auth/profile`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     }
-//   );
-//   if (!response.ok) {
-//     throw new Error("Unauthorized");
-//   }
-//   return response.json();
-// };
 const fetchWrapper = new FetchWrapper(
   process.env.NEXT_PUBLIC_SERVER_AUTH_API as string
 );
@@ -27,6 +9,7 @@ export default async function DemoAuthorization() {
     email: string;
     role: string;
   }>("/auth/profile");
+
   const user = response.data;
   return (
     <div>

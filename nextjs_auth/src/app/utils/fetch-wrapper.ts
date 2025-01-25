@@ -1,4 +1,4 @@
-import { isClient, makeRefreshToken } from "./auth";
+import { getToken, isClient, makeRefreshToken, saveToken } from "./auth";
 
 export class FetchWrapper {
   #baseUrl: string = "";
@@ -20,10 +20,8 @@ export class FetchWrapper {
     options: { headers?: { [key: string]: string } } = {}
   ): Promise<Response & { data?: T }> {
     if (!isClient()) {
-      const { cookies } = await import("next/headers");
-      const cookieStore = await cookies();
-      const token = cookieStore.get("token");
-      Object.assign(this.#headers, { Authorization: `Bearer ${token?.value}` });
+      const token = await getToken();
+      Object.assign(this.#headers, { Authorization: `Bearer ${token}` });
     }
     const requestInit: RequestInit = {
       method,
@@ -42,18 +40,10 @@ export class FetchWrapper {
       requestInit
     );
     if (response.status === 401 && this.#refreshToken && isClient()) {
-      const newToken = await makeRefreshToken(this.#refreshToken);
+      const newToken: { access_token: string; refresh_token: string } =
+        await makeRefreshToken(this.#refreshToken);
       if (newToken) {
-        await fetch(`/api/cookie?key=token`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            value: (newToken as { access_token: string }).access_token,
-            maxAge: 86400,
-          }),
-        });
+        await saveToken(newToken.access_token, newToken.refresh_token);
         this.#headers.Authorization = `Bearer ${
           (newToken as { access_token: string }).access_token
         }`;

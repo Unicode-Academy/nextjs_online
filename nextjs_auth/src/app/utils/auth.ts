@@ -1,7 +1,12 @@
 // import { cookies } from "next/headers";
 import { cache } from "react";
-let refreshTokenPromise: Promise<unknown> | null = null;
-export const makeRefreshToken = async (refreshToken: string) => {
+let refreshTokenPromise: Promise<{
+  access_token: string;
+  refresh_token: string;
+}> | null = null;
+export const makeRefreshToken = async (
+  refreshToken: string
+): Promise<{ access_token: string; refresh_token: string }> => {
   const requestRefreshToken = async () => {
     console.log("refresh token");
     const response = await fetch(
@@ -98,4 +103,44 @@ export const deleteToken = async () => {
   await fetch(`/api/cookie?key=refresh_token`, {
     method: "DELETE",
   });
+};
+
+export const saveToken = async (accessToken: string, refreshToken: string) => {
+  if (!isClient()) {
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    cookieStore.set("token", accessToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: process.env.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRE as unknown as number,
+    });
+    cookieStore.set("refresh_token", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: process.env.NEXT_PUBLIC_REFRESH_TOKEN_EXPIRE as unknown as number,
+    });
+  } else {
+    await fetch(`/api/cookie?key=token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        value: accessToken,
+        maxAge: process.env
+          .NEXT_PUBLIC_ACCESS_TOKEN_EXPIRE as unknown as number,
+      }),
+    });
+    await fetch(`/api/cookie?key=refresh_token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        value: accessToken,
+        maxAge: process.env
+          .NEXT_PUBLIC_REFRESH_TOKEN_EXPIRE as unknown as number,
+      }),
+    });
+  }
 };
