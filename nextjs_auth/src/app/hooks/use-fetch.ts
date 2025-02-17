@@ -1,18 +1,54 @@
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import { AppContext } from "../(main-layout)/_components/Provider";
 import { FetchWrapper } from "../utils/fetch-wrapper";
 
-export const useFetch = (baseUrl: string) => {
+// export const useFetch = (baseUrl: string) => {
+//   const { accessToken, refreshToken } = use(AppContext);
+//   if (!accessToken) {
+//     return {
+//       fetchWrapper: {} as FetchWrapper,
+//       status: "pending",
+//     };
+//   }
+//   const fetchWrapper = new FetchWrapper(baseUrl, {
+//     Authorization: `Bearer ${accessToken}`,
+//   });
+//   fetchWrapper.refreshToken(refreshToken!);
+//   return { fetchWrapper, status: "success" };
+// };
+type OptionTypes = {
+  baseUrl: string;
+  isAuth: boolean;
+};
+export const useFetch = <T>(
+  callback: (
+    fetchWrapper: FetchWrapper
+  ) => Promise<(Response & { data?: T }) | null>,
+  options: OptionTypes = {} as OptionTypes
+) => {
   const { accessToken, refreshToken } = use(AppContext);
-  if (!accessToken) {
-    return {
-      fetchWrapper: {} as FetchWrapper,
-      status: "pending",
+  const [response, setResponse] = useState<(Response & { data?: T }) | null>(
+    {} as Response & { data?: T }
+  );
+  const { baseUrl, isAuth } = options;
+  useEffect(() => {
+    const handle = async () => {
+      if (!accessToken && isAuth) {
+        return;
+      }
+      const fetchWrapper = new FetchWrapper(
+        baseUrl,
+        accessToken && isAuth
+          ? {
+              Authorization: `Bearer ${accessToken}`,
+            }
+          : {}
+      );
+      fetchWrapper.refreshToken(refreshToken!);
+      const response = await callback(fetchWrapper);
+      setResponse(response);
     };
-  }
-  const fetchWrapper = new FetchWrapper(baseUrl, {
-    Authorization: `Bearer ${accessToken}`,
-  });
-  fetchWrapper.refreshToken(refreshToken!);
-  return { fetchWrapper, status: "success" };
+    handle();
+  }, [accessToken]);
+  return response;
 };

@@ -46,28 +46,32 @@ export class FetchWrapper {
       `${this.#baseUrl}${path}`,
       requestInit
     );
-    if (response.status === 401 && this.#refreshToken && isClient()) {
-      const newToken: { access_token: string; refresh_token: string } =
-        await makeRefreshToken(this.#refreshToken);
-      if (newToken) {
-        await saveToken(newToken.access_token);
-        this.#headers.Authorization = `Bearer ${
-          (newToken as { access_token: string }).access_token
-        }`;
-        return this.#send<T>(path, method, data, options);
-      }
-    }
-    if (response.status === 401 && !isClient()) {
-      const refreshToken = await getRefreshToken();
-      const newToken: { access_token: string; refresh_token: string } =
-        await makeRefreshToken(refreshToken);
-      if (newToken) {
-        console.log("newToken", newToken);
-        this.#isRefreshTokenServer = true;
-        this.#headers.Authorization = `Bearer ${
-          (newToken as { access_token: string }).access_token
-        }`;
-        return this.#send<T>(path, method, data, options);
+    if (response.status === 401) {
+      //Xử lý refresh token phía client
+      if (isClient()) {
+        if (this.#refreshToken) {
+          const newToken: { access_token: string; refresh_token: string } =
+            await makeRefreshToken(this.#refreshToken);
+          if (newToken) {
+            await saveToken(newToken.access_token);
+            this.#headers.Authorization = `Bearer ${
+              (newToken as { access_token: string }).access_token
+            }`;
+            return this.#send<T>(path, method, data, options);
+          }
+        }
+      } else {
+        //Xử lý refresh token phía server
+        const refreshToken = await getRefreshToken();
+        const newToken: { access_token: string; refresh_token: string } =
+          await makeRefreshToken(refreshToken);
+        if (newToken) {
+          this.#isRefreshTokenServer = true;
+          this.#headers.Authorization = `Bearer ${
+            (newToken as { access_token: string }).access_token
+          }`;
+          return this.#send<T>(path, method, data, options);
+        }
       }
     }
     response.data = await response.json();
