@@ -105,7 +105,7 @@ export const deleteToken = async () => {
   });
 };
 
-export const saveToken = async (accessToken: string, refreshToken: string) => {
+export const saveToken = async (accessToken: string, refreshToken?: string) => {
   if (!isClient()) {
     const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
@@ -114,11 +114,14 @@ export const saveToken = async (accessToken: string, refreshToken: string) => {
       path: "/",
       maxAge: process.env.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRE as unknown as number,
     });
-    cookieStore.set("refresh_token", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      maxAge: process.env.NEXT_PUBLIC_REFRESH_TOKEN_EXPIRE as unknown as number,
-    });
+    if (refreshToken) {
+      cookieStore.set("refresh_token", refreshToken, {
+        httpOnly: true,
+        path: "/",
+        maxAge: process.env
+          .NEXT_PUBLIC_REFRESH_TOKEN_EXPIRE as unknown as number,
+      });
+    }
   } else {
     await fetch(`/api/cookie?key=token`, {
       method: "POST",
@@ -131,16 +134,18 @@ export const saveToken = async (accessToken: string, refreshToken: string) => {
           .NEXT_PUBLIC_ACCESS_TOKEN_EXPIRE as unknown as number,
       }),
     });
-    await fetch(`/api/cookie?key=refresh_token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        value: accessToken,
-        maxAge: process.env
-          .NEXT_PUBLIC_REFRESH_TOKEN_EXPIRE as unknown as number,
-      }),
-    });
+    if (refreshToken) {
+      await fetch(`/api/cookie?key=refresh_token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          value: accessToken,
+          maxAge: process.env
+            .NEXT_PUBLIC_REFRESH_TOKEN_EXPIRE as unknown as number,
+        }),
+      });
+    }
   }
 };

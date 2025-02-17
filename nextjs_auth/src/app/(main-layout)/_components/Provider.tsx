@@ -1,5 +1,10 @@
 "use client";
-import { getRefreshToken, getToken, makeRefreshToken } from "@/app/utils/auth";
+import {
+  getRefreshToken,
+  getToken,
+  makeRefreshToken,
+  saveToken,
+} from "@/app/utils/auth";
 import React, { useEffect, useState } from "react";
 import { FetchWrapper } from "@/app/utils/fetch-wrapper";
 import { useRouter } from "next/navigation";
@@ -44,16 +49,7 @@ export default function Provider({
         if (response.status === 401) {
           const newToken = await makeRefreshToken(refreshToken!);
           if (newToken) {
-            await fetch(`/api/cookie?key=token`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                value: (newToken as { access_token: string }).access_token,
-                maxAge: 86400,
-              }),
-            });
+            await saveToken(newToken.access_token);
           } else {
             router.push("/auth/logout");
           }
@@ -63,7 +59,6 @@ export default function Provider({
     handleRefreshToken();
   }, [accessToken, refreshToken]);
   console.log("provider");
-
   return (
     <AppContext value={{ accessToken, refreshToken }}>{children}</AppContext>
   );

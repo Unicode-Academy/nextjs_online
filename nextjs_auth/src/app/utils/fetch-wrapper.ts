@@ -1,9 +1,16 @@
-import { getToken, isClient, makeRefreshToken, saveToken } from "./auth";
+import {
+  getRefreshToken,
+  getToken,
+  isClient,
+  makeRefreshToken,
+  saveToken,
+} from "./auth";
 
 export class FetchWrapper {
   #baseUrl: string = "";
   #headers: { [key: string]: string } = {};
   #refreshToken: string = "";
+  #isRefreshTokenServer: boolean = false;
   constructor(baseUrl?: string, headers?: { [key: string]: string }) {
     if (baseUrl) {
       this.#baseUrl = baseUrl;
@@ -19,7 +26,7 @@ export class FetchWrapper {
     data?: null | { [key: string]: unknown },
     options: { headers?: { [key: string]: string } } = {}
   ): Promise<Response & { data?: T }> {
-    if (!isClient()) {
+    if (!isClient() && !this.#isRefreshTokenServer) {
       const token = await getToken();
       Object.assign(this.#headers, { Authorization: `Bearer ${token}` });
     }
@@ -43,14 +50,24 @@ export class FetchWrapper {
       const newToken: { access_token: string; refresh_token: string } =
         await makeRefreshToken(this.#refreshToken);
       if (newToken) {
-        await saveToken(newToken.access_token, newToken.refresh_token);
+        await saveToken(newToken.access_token);
         this.#headers.Authorization = `Bearer ${
           (newToken as { access_token: string }).access_token
         }`;
         return this.#send<T>(path, method, data, options);
       }
-      if (window.location.pathname !== "/auth/logout") {
-        window.location.href = "/auth/logout"; //Đăng xuất
+    }
+    if (response.status === 401 && !isClient()) {
+      const refreshToken = await getRefreshToken();
+      const newToken: { access_token: string; refresh_token: string } =
+        await makeRefreshToken(refreshToken);
+      if (newToken) {
+        console.log("newToken", newToken);
+        this.#isRefreshTokenServer = true;
+        this.#headers.Authorization = `Bearer ${
+          (newToken as { access_token: string }).access_token
+        }`;
+        return this.#send<T>(path, method, data, options);
       }
     }
     response.data = await response.json();
