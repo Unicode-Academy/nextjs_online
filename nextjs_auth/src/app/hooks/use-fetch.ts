@@ -23,13 +23,13 @@ type OptionTypes = {
 export const useFetch = <T>(
   callback: (
     fetchWrapper: FetchWrapper
-  ) => Promise<(Response & { data?: T }) | null>,
+  ) => Promise<(Response & { data?: T; fetchWrapper?: FetchWrapper }) | null>,
   options: OptionTypes = {} as OptionTypes
 ) => {
   const { accessToken, refreshToken } = use(AppContext);
-  const [response, setResponse] = useState<(Response & { data?: T }) | null>(
-    {} as Response & { data?: T }
-  );
+  const [response, setResponse] = useState<
+    (Response & { data?: T; fetchWrapper?: FetchWrapper }) | null
+  >({} as Response & { data?: T; fetchWrapper?: FetchWrapper });
   const { baseUrl, isAuth } = options;
   useEffect(() => {
     const handle = async () => {
@@ -46,6 +46,10 @@ export const useFetch = <T>(
       );
       fetchWrapper.refreshToken(refreshToken!);
       const response = await callback(fetchWrapper);
+      if (response) {
+        response.fetchWrapper = fetchWrapper;
+      }
+
       setResponse(response);
     };
     handle();

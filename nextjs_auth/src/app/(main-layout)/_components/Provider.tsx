@@ -22,43 +22,39 @@ export default function Provider({
   const [accessToken, setToken] = useState<null | string>(null);
   const [refreshToken, setRefreshToken] = useState<null | string>(null);
   const router = useRouter();
+  const checkAccessTokenAndRefreshToken = async (
+    accessToken: string,
+    refreshToken: string
+  ) => {
+    const response = await fetchWrapper.get("/auth/profile", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (response.status === 401) {
+      const newToken = await makeRefreshToken(refreshToken!);
+      if (newToken) {
+        await saveToken(newToken.access_token);
+      } else {
+        router.push("/auth/logout");
+      }
+    }
+  };
+
   // const pathname = usePathname();
   //Làm sao lấy được token trong này
   useEffect(() => {
-    const showToken = async () => {
+    const sendAccessTokenAndRefreshToken = async () => {
       const token = await getToken();
       const refreshToken = await getRefreshToken();
-      if (token) {
+      if (token && refreshToken) {
         setToken(token);
-      }
-      if (refreshToken) {
         setRefreshToken(refreshToken);
+        checkAccessTokenAndRefreshToken(accessToken!, refreshToken!);
       }
     };
-    showToken();
+    sendAccessTokenAndRefreshToken();
   }, []);
-
-  useEffect(() => {
-    const handleRefreshToken = async () => {
-      if (accessToken && refreshToken) {
-        const response = await fetchWrapper.get("/auth/profile", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        if (response.status === 401) {
-          const newToken = await makeRefreshToken(refreshToken!);
-          if (newToken) {
-            await saveToken(newToken.access_token);
-          } else {
-            router.push("/auth/logout");
-          }
-        }
-      }
-    };
-    handleRefreshToken();
-  }, [accessToken, refreshToken]);
-  console.log("provider");
   return (
     <AppContext value={{ accessToken, refreshToken }}>{children}</AppContext>
   );

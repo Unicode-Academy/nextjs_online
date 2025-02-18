@@ -58,6 +58,8 @@ export class FetchWrapper {
               (newToken as { access_token: string }).access_token
             }`;
             return this.#send<T>(path, method, data, options);
+          } else {
+            window.location.href = `/auth/logout`;
           }
         }
       } else {
