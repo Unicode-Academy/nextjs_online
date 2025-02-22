@@ -8,3 +8,13 @@ export default function Home() {
     </div>
   );
 }
+
+/*
+Callbacks: 
+
+jwt → Thêm dữ liệu vào token trước khi gửi về client.
+session → Thêm dữ liệu vào session, giúp client truy cập thông tin.
+signIn → Chặn hoặc cho phép đăng nhập dựa vào điều kiện.
+redirect → Điều hướng người dùng sau khi đăng nhập hoặc đăng xuất.
+authorized (Middleware) → Kiểm soát truy cập API.
+*/
