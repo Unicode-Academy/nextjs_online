@@ -17,9 +17,16 @@ export const authOptions: AuthOptions = {
       session: Session & { sub?: string };
       token: JWT;
     }) {
-      // console.log(token);
       session.sub = token.sub;
       return session;
+    },
+    redirect({ url, baseUrl }) {
+      // console.log(`url: ${url}`);
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
+    signIn({ user }) {
+      if (!user.email) return false;
+      return (user.email as string).includes("@unicode.vn");
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
