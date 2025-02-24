@@ -4,7 +4,7 @@ import Login from "../_components/Login";
 
 export default async function DemoPage() {
   const session = await getServerSession(authOptions);
-  // console.log(session);
+  console.log(session);
 
   return (
     <div>

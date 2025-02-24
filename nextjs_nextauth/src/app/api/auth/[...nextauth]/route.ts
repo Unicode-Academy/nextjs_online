@@ -10,23 +10,41 @@ export const authOptions: AuthOptions = {
     // ...add more providers here
   ],
   callbacks: {
-    async session({
-      session,
-      token,
-    }: {
-      session: Session & { sub?: string };
-      token: JWT;
-    }) {
-      session.sub = token.sub;
-      return session;
-    },
+    // async session({
+    //   session,
+    //   token,
+    // }: {
+    //   session: Session & { sub?: string };
+    //   token: JWT;
+    // }) {
+    //   session.sub = token.sub;
+    //   return session;
+    // },
     redirect({ url, baseUrl }) {
       // console.log(`url: ${url}`);
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
-    signIn({ user }) {
-      if (!user.email) return false;
-      return (user.email as string).includes("@unicode.vn");
+    // signIn({ user }) {
+    //   if (!user.email) return false;
+    //   return (user.email as string).includes("@unicode.vn");
+    // },
+    async jwt({ token, account }) {
+      // Persist the OAuth access_token and or the user id to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+
+      return token;
+    },
+    async session({
+      session,
+      token,
+    }: {
+      session: Session & { accessToken?: string };
+      token: JWT;
+    }) {
+      session.accessToken = token.accessToken as string;
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
