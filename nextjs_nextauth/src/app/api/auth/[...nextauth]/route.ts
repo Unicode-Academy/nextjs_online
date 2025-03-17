@@ -1,6 +1,7 @@
 import NextAuth, { AuthOptions, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: AuthOptions = {
@@ -8,6 +9,10 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -29,7 +34,7 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials) {
-        console.log(credentials);
+        // console.log(credentials);
 
         // You need to provide your own logic here that takes the credentials
         // submitted and returns either a object representing a user or value
@@ -88,16 +93,17 @@ export const authOptions: AuthOptions = {
     // },
     async jwt({ token, account, user }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
-      // console.log(token, account);
+      // console.log(token, account, user);
 
-      if (account) {
+      if (account && account.access_token) {
         token.accessToken = account.access_token;
       }
 
       if (user) {
-        token.accessToken = (
-          user as User & { access_token?: string }
-        ).access_token;
+        const userDetail = user as User & { access_token?: string };
+        if (userDetail.access_token) {
+          token.accessToken = userDetail.access_token;
+        }
       }
 
       return token;
@@ -109,6 +115,8 @@ export const authOptions: AuthOptions = {
       session: Session & { accessToken?: string };
       token: JWT;
     }) {
+      // console.log("token", token);
+
       session.accessToken = token.accessToken as string;
       return session;
     },
