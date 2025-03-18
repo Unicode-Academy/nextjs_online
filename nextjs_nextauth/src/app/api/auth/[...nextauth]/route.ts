@@ -87,13 +87,22 @@ export const authOptions: AuthOptions = {
       // console.log(`url: ${url}`);
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
-    // signIn({ user }) {
-    //   if (!user.email) return false;
-    //   return (user.email as string).includes("@unicode.vn");
-    // },
+    signIn({ account, user }) {
+      if (account?.provider === "google") {
+        //CALL API --> Back-End Trả về accessToken
+        (user as { access_token?: string }).access_token = "abc google";
+        user.name = "New Name Google";
+      }
+
+      if (account?.provider === "github") {
+        //CALL API --> Back-End Trả về accessToken
+        (user as { access_token?: string }).access_token = "abc github";
+        user.name = "New Name Github";
+      }
+      return true;
+    },
     async jwt({ token, account, user }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
-      // console.log(token, account, user);
 
       if (account && account.access_token) {
         token.accessToken = account.access_token;
