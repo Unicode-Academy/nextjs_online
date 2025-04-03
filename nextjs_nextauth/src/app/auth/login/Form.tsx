@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
 type FormData = { email: string; password: string };
 export default function Form() {
   const [form, setForm] = useState<FormData>({} as FormData);
@@ -45,6 +44,33 @@ export default function Form() {
         />
       </div>
       <button className="btn btn-primary">Đăng nhập</button>
+      <p className="text-center">Hoặc</p>
+      <div className="d-grid mb-3">
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() =>
+            signIn("google", {
+              callbackUrl: "/",
+            })
+          }
+        >
+          Đăng nhập qua Google
+        </button>
+      </div>
+      <div className="d-grid">
+        <button
+          type="button"
+          className="btn btn-dark"
+          onClick={() =>
+            signIn("github", {
+              callbackUrl: "/",
+            })
+          }
+        >
+          Đăng nhập qua Github
+        </button>
+      </div>
     </form>
   );
 }
