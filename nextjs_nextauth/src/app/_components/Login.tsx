@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 export default function Login() {
   const { data: session } = useSession();
-  console.log(session);
   const router = useRouter();
 
   if (session) {

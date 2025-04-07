@@ -65,6 +65,7 @@ export const authOptions: AuthOptions = {
           );
           const user = await res.json();
           user.access_token = token.access_token;
+          user.refresh_token = token.refresh_token;
           return user;
         }
         // // Return null if user data could not be retrieved
@@ -104,16 +105,32 @@ export const authOptions: AuthOptions = {
     async jwt({ token, account, user }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
 
-      if (account && account.access_token) {
-        token.accessToken = account.access_token;
+      if (account) {
+        if (account.access_token) {
+          token.accessToken = account.access_token;
+        }
+        if (account.refresh_token) {
+          token.refreshToken = account.refresh_token;
+        }
       }
 
       if (user) {
-        const userDetail = user as User & { access_token?: string };
+        const userDetail = user as User & {
+          access_token?: string;
+          refresh_token?: string;
+        };
         if (userDetail.access_token) {
           token.accessToken = userDetail.access_token;
         }
+        if (userDetail.refresh_token) {
+          token.refreshToken = userDetail.refresh_token;
+        }
       }
+
+      //Kiểm tra xem accessToken có hết hạn không?
+      //- Nếu còn hạn --> return token
+      //- Nếu hết hạn --> Lấy refreshToken để call api --> cấp lại accessToken mới và refreshToken mới (Nếu có) --> Lưu accessToken vào trong token và return về
+      console.log(token);
 
       return token;
     },
@@ -124,7 +141,7 @@ export const authOptions: AuthOptions = {
       session: Session & { accessToken?: string };
       token: JWT;
     }) {
-      // console.log("token", token);
+      console.log("session callback");
 
       session.accessToken = token.accessToken as string;
       return session;
