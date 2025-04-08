@@ -3,6 +3,7 @@ import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { refreshToken } from "@/app/utils/utils";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -84,10 +85,10 @@ export const authOptions: AuthOptions = {
     //   session.sub = token.sub;
     //   return session;
     // },
-    redirect({ url, baseUrl }) {
-      // console.log(`url: ${url}`);
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
+    // redirect({ url, baseUrl }) {
+    //   // console.log(`url: ${url}`);
+    //   return url.startsWith(baseUrl) ? url : baseUrl;
+    // },
     signIn({ account, user }) {
       if (account?.provider === "google") {
         //CALL API --> Back-End Trả về accessToken
@@ -130,7 +131,30 @@ export const authOptions: AuthOptions = {
       //Kiểm tra xem accessToken có hết hạn không?
       //- Nếu còn hạn --> return token
       //- Nếu hết hạn --> Lấy refreshToken để call api --> cấp lại accessToken mới và refreshToken mới (Nếu có) --> Lưu accessToken vào trong token và return về
-      console.log(token);
+      const payloadAccessToken = (token.accessToken as string).split(".")[1];
+
+      //Decode payload
+      const payloadDecoded = JSON.parse(
+        Buffer.from(payloadAccessToken, "base64").toString()
+      );
+
+      if (payloadDecoded.exp) {
+        const accessTokenExp = payloadDecoded.exp;
+        // const accessTokenExp = new Date().getTime() / 1000 - 100;
+        const currentTime = new Date().getTime() / 1000;
+        if (currentTime >= accessTokenExp) {
+          console.log("hết hạn");
+
+          const newToken = await refreshToken(token.refreshToken as string);
+          if (newToken) {
+            token.accessToken = newToken.access_token;
+            token.refreshToken = newToken.refresh_token;
+            token.forceLogout = false;
+          } else {
+            token.forceLogout = true;
+          }
+        }
+      }
 
       return token;
     },
@@ -138,12 +162,11 @@ export const authOptions: AuthOptions = {
       session,
       token,
     }: {
-      session: Session & { accessToken?: string };
+      session: Session & { accessToken?: string; forceLogout?: boolean };
       token: JWT;
     }) {
-      console.log("session callback");
-
       session.accessToken = token.accessToken as string;
+      session.forceLogout = token.forceLogout as boolean;
       return session;
     },
   },
