@@ -1,7 +1,7 @@
 "use client";
 
 import { Session } from "next-auth";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -17,6 +17,15 @@ export default function Login() {
       signOut({ callbackUrl: "/auth/login", redirect: true });
     }
   }, [session]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const session = await getSession();
+      console.log(session);
+    };
+    getData();
+  }, []);
+
   if (session) {
     return (
       <div>

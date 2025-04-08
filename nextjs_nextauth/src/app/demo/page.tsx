@@ -1,13 +1,17 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import Login from "../_components/Login";
+// import { getServerSession } from "next-auth";
 
+import { instance } from "../utils/fetch-wrapper";
+
+// import { authOptions } from "../api/auth/[...nextauth]/route";
 export default async function DemoPage() {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
+  // console.log(session);
+  const data = await instance.get(`/auth/profile`);
+  console.log(data);
+
   return (
     <div>
-      <h1>Chào bạn: {session?.user?.name}</h1>
-      <Login />
+      <h1>Demo Fetch Wrapper</h1>
     </div>
   );
 }
