@@ -155,6 +155,7 @@ export const authOptions: AuthOptions = {
           }
         }
       }
+      console.log(token);
 
       return token;
     },
@@ -173,6 +174,10 @@ export const authOptions: AuthOptions = {
   pages: {
     signIn: "/auth/login",
     signOut: "/auth/logout",
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
