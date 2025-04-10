@@ -35,19 +35,21 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials) {
-        // console.log(credentials);
-
+        const cre = credentials as
+          | { username: string; password: string; remember: string }
+          | undefined;
         // You need to provide your own logic here that takes the credentials
         // submitted and returns either a object representing a user or value
         // that is false/null if the credentials are invalid.
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
+
         const res = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
           method: "POST",
           body: JSON.stringify({
-            email: credentials?.username,
-            password: credentials?.password,
+            email: cre?.username,
+            password: cre?.password,
           }),
           headers: { "Content-Type": "application/json" },
         });
@@ -67,6 +69,7 @@ export const authOptions: AuthOptions = {
           const user = await res.json();
           user.access_token = token.access_token;
           user.refresh_token = token.refresh_token;
+          user.remember = cre?.remember === "true";
           return user;
         }
         // // Return null if user data could not be retrieved
@@ -101,6 +104,7 @@ export const authOptions: AuthOptions = {
         (user as { access_token?: string }).access_token = "abc github";
         user.name = "New Name Github";
       }
+
       return true;
     },
     async jwt({ token, account, user }) {
@@ -119,6 +123,7 @@ export const authOptions: AuthOptions = {
         const userDetail = user as User & {
           access_token?: string;
           refresh_token?: string;
+          remember?: boolean;
         };
         if (userDetail.access_token) {
           token.accessToken = userDetail.access_token;
@@ -126,6 +131,14 @@ export const authOptions: AuthOptions = {
         if (userDetail.refresh_token) {
           token.refreshToken = userDetail.refresh_token;
         }
+
+        if (userDetail.remember) {
+          token.rememer = userDetail.remember;
+        }
+
+        //Kiểm tra xem có remember không?
+        // - Nếu có remember --> Không làm gì cả
+        // - Không có remember --> Xử lại exp của token
       }
 
       //Kiểm tra xem accessToken có hết hạn không?
@@ -155,7 +168,12 @@ export const authOptions: AuthOptions = {
           }
         }
       }
-      console.log(token);
+
+      if (!token.remember) {
+        //Không có remember
+        token.exp = Math.floor(Date.now() / 1000) + 60 * 2;
+      }
+      console.log(token.exp);
 
       return token;
     },
@@ -163,11 +181,16 @@ export const authOptions: AuthOptions = {
       session,
       token,
     }: {
-      session: Session & { accessToken?: string; forceLogout?: boolean };
+      session: Session & {
+        accessToken?: string;
+        forceLogout?: boolean;
+        remember?: boolean;
+      };
       token: JWT;
     }) {
       session.accessToken = token.accessToken as string;
       session.forceLogout = token.forceLogout as boolean;
+      session.remember = token.remember as boolean;
       return session;
     },
   },
@@ -177,7 +200,7 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60,
+    maxAge: 60 * 60 * 24 * 30, //Đơn vị giây
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

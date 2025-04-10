@@ -2,15 +2,21 @@
 
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-type FormData = { email: string; password: string };
+type FormData = { email: string; password: string; remember: boolean };
 export default function Form() {
-  const [form, setForm] = useState<FormData>({} as FormData);
+  const [form, setForm] = useState<FormData>({
+    email: "",
+    password: "",
+    remember: false,
+  } as FormData);
   const [msg, setMsg] = useState("");
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const result = await signIn("credentials", {
       username: form.email,
       password: form.password,
+      remember: form.remember,
       redirect: false,
     });
     if (!result?.ok) {
@@ -42,6 +48,16 @@ export default function Form() {
           placeholder="Password.."
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
+      </div>
+      <div className="mb-3">
+        <label>
+          <input
+            type="checkbox"
+            className="me-1"
+            onChange={(e) => setForm({ ...form, remember: e.target.checked })}
+          />{" "}
+          Ghi nhớ tôi
+        </label>
       </div>
       <button className="btn btn-primary">Đăng nhập</button>
       <p className="text-center">Hoặc</p>
