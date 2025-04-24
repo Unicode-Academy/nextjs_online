@@ -7,14 +7,14 @@ export default async function Users() {
       id: "desc",
     },
   });
-  console.log(users);
   return (
     <div>
       <h1>Users</h1>
       {users.map((user) => (
         <h3 key={user.id}>
           {user.name} - {user.email}{" "}
-          <Link href={`/users/edit/${user.id}`}>Edit</Link>
+          <Link href={`/users/edit/${user.id}`}>Edit</Link>{" "}
+          <Link href={`/users/delete/${user.id}`}>Delete</Link>
         </h3>
       ))}
     </div>
