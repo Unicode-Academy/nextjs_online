@@ -1,8 +1,10 @@
-import prisma from "@/lib/prisma";
+// import prisma from "@/lib/prisma";
 import Link from "next/link";
 import Pagination from "./_components/Pagination";
 import Filter from "./_components/Filter";
 import { Prisma } from "../generated/prisma";
+// import { cache } from "react";
+import { getListUser } from "@/utils/query";
 const LIMIT = 3;
 export default async function Users({
   searchParams,
@@ -33,19 +35,8 @@ export default async function Users({
       },
     ];
   }
-  const users = await prisma.user.findMany({
-    orderBy: {
-      id: "desc",
-    },
-    take: LIMIT,
-    skip,
-    where,
-  });
 
-  const totalRows = await prisma.user.count({
-    where,
-  });
-  const maxPage = Math.ceil(totalRows / LIMIT);
+  const { users, maxPage } = await getListUser(LIMIT, skip, where);
 
   return (
     <div>
@@ -62,3 +53,10 @@ export default async function Users({
     </div>
   );
 }
+
+//Cache
+/*
+- Viết Route Handler --> Gọi qua Fetch (Fetch Cache)
+- React Cache
+- unstable_cache hoặc use cache
+*/
