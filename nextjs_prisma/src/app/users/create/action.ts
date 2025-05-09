@@ -1,6 +1,7 @@
 "use server";
 import prisma from "@/lib/prisma";
 import { hashPassword } from "@/utils/hashing";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 export const createUser = async (
   prevState: { message: string },
@@ -35,5 +36,6 @@ export const createUser = async (
       status: status === "active",
     },
   });
+  revalidateTag("user-list");
   redirect("/users");
 };

@@ -2,6 +2,7 @@
 import { Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { hashPassword } from "@/utils/hashing";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 export const updateUser = async (
   prevState: { message: string },
@@ -47,5 +48,7 @@ export const updateUser = async (
     data: dataUpdate,
     where: { id },
   });
+  revalidateTag("user-list");
+  revalidateTag(`user-${id}`);
   redirect("/users");
 };
