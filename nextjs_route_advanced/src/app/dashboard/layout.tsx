@@ -10,11 +10,15 @@ export default function DashboardLayout({
   analytics: React.ReactNode;
 }) {
   return (
-    <div>
-      <Header />
-      <main>{children}</main>
-      <section>{team}</section>
-      <section>{analytics}</section>
+    <div className="w-[1200px] mx-auto">
+      <main className="mb-3">
+        <Header />
+        {children}
+      </main>
+      <div className="flex gap-3">
+        <section className="w-1/2 border h-[500px]">{team}</section>
+        <section className="w-1/2 border h-[500px]">{analytics}</section>
+      </div>
     </div>
   );
 }
