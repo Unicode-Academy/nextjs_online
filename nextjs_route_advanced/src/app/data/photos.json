@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "title": "Photo 1",
+    "description": "Photo 1 description"
+  },
+  {
+    "id": 2,
+    "title": "Photo 2",
+    "description": "Photo 2 description"
+  },
+  {
+    "id": 3,
+    "title": "Photo 3",
+    "description": "Photo 3 description"
+  }
+]
