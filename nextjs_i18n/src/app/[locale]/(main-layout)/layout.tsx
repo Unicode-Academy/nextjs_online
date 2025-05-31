@@ -1,17 +1,13 @@
-import { Link } from "@/i18n/navigation";
+import Header from "./Header";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <header>
-        <h1 className="text-3xl">Unicode</h1>
-        <Link href="/">Home</Link>
-        <Link href="/about">About</Link>
-      </header>
+    <div className="w-[1200px] mx-auto py-5">
+      <Header />
       {children}
     </div>
   );
