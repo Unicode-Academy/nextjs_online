@@ -1,7 +1,24 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { NextRequest, NextResponse } from "next/server";
+const i18nMiddleware = createMiddleware(routing);
+const isAuth = false;
+export default async function middleware(request: NextRequest) {
+  const response = i18nMiddleware(request);
+  console.log(response.ok);
 
-export default createMiddleware(routing);
+  if (response && !response.ok) {
+    return response;
+  }
+  //Logic
+  const pathname = "/" + request.nextUrl.pathname.split("/")[2];
+  if (pathname.startsWith("/orders") && !isAuth) {
+    //Check authentication
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return response;
+}
 
 export const config = {
   // Match all pathnames except for
