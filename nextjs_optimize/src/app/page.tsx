@@ -1,17 +1,18 @@
-import { openSans } from "@/utils/fonts";
-import clsx from "clsx";
-import Image from "next/image";
 // import img01 from "../images/img01.jpg";
+import clsx from "clsx";
+import homeStyle from "./home.module.css";
+import "./app.scss";
+
 export default function HomePage() {
   return (
     <div className="w-[1200px] mx-auto">
-      <h1 className="text-3xl font-bold underline">Tối ưu hình ảnh</h1>
+      {/* <h1 className="text-3xl font-bold underline">Tối ưu hình ảnh</h1>
       <h2 className={clsx("text-2xl font-bold", openSans.className)}>
         Ok chưa?
-      </h2>
+      </h2> */}
       {/* <Image src={img01} width={300} alt="Hình ảnh 01" />
       <Image src={"/img01.jpg"} width={300} height={200} alt="Hình ảnh 02" /> */}
-      <div className="flex gap-3">
+      {/* <div className="flex gap-3">
         <div className="w-1/3 relative h-[200px]">
           <Image
             src={
@@ -47,7 +48,18 @@ export default function HomePage() {
             fill
             alt="Hình ảnh 03"
           />
-        </div>
+        </div> */}
+      {/* </div> */}
+      <h1 className={clsx(homeStyle.title)}>CSS Module</h1>
+      <div className="box">
+        <h2 className="title">Xin chào NextJS</h2>
+        <h3
+          style={{
+            color: "red",
+          }}
+        >
+          Học NextJs
+        </h3>
       </div>
     </div>
   );
