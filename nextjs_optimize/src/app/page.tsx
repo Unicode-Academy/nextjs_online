@@ -1,7 +1,7 @@
 // import img01 from "../images/img01.jpg";
-import clsx from "clsx";
-import homeStyle from "./home.module.css";
-import "./app.scss";
+// import clsx from "clsx";
+// import homeStyle from "./home.module.css";
+// import "./app.scss";
 
 export default function HomePage() {
   return (
@@ -50,7 +50,7 @@ export default function HomePage() {
           />
         </div> */}
       {/* </div> */}
-      <h1 className={clsx(homeStyle.title)}>CSS Module</h1>
+      {/* <h1 className={clsx(homeStyle.title)}>CSS Module</h1>
       <div className="box">
         <h2 className="title">Xin chào NextJS</h2>
         <h3
@@ -60,7 +60,7 @@ export default function HomePage() {
         >
           Học NextJs
         </h3>
-      </div>
+      </div> */}
     </div>
   );
 }
