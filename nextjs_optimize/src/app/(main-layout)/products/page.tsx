@@ -12,10 +12,11 @@ export async function generateMetadata({
     title: search ? "Tìm kiếm: " + search : "Products",
   };
 }
-export default function ProductsPage() {
+export default async function ProductsPage({ searchParams }: Props) {
+  const { search } = await searchParams;
   return (
     <div>
-      <h1 className="text-3xl font-bold">Products</h1>
+      <h1 className="text-3xl font-bold">Products: {search}</h1>
     </div>
   );
 }
