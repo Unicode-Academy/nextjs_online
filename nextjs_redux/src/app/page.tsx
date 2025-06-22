@@ -1,6 +1,10 @@
 // import Counter from "./_components/Counter";
 
-import TodoList from "./_components/TodoList";
+import Users from "./_components/Users";
+
+// import Pokemon from "./_components/Pokemon";
+
+// import TodoList from "./_components/TodoList";
 
 export default function Home() {
   // console.log("home");
@@ -8,7 +12,9 @@ export default function Home() {
   return (
     <div>
       {/* <Counter /> */}
-      <TodoList />
+      {/* <TodoList /> */}
+      {/* <Pokemon /> */}
+      <Users />
     </div>
   );
 }

@@ -5,6 +5,7 @@ export const todoSlice = createSlice({
   initialState: {
     todoList: [],
     status: "pending",
+    todo: {},
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -18,6 +19,10 @@ export const todoSlice = createSlice({
     builder.addCase(getTodoList.rejected, (state) => {
       state.status = "error";
     });
+
+    builder.addCase(getTodo.fulfilled, (state, action) => {
+      state.todo = action.payload;
+    });
   },
 });
 
@@ -25,6 +30,19 @@ export const getTodoList = createAsyncThunk(
   "getTodoList",
   async (_, { rejectWithValue }) => {
     const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+    if (!response.ok) {
+      return rejectWithValue(response.statusText);
+    }
+    return response.json();
+  }
+);
+
+export const getTodo = createAsyncThunk(
+  "getTodo",
+  async (id: number, { rejectWithValue }) => {
+    const response = await fetch(
+      "https://jsonplaceholder.typicode.com/todos/" + id
+    );
     if (!response.ok) {
       return rejectWithValue(response.statusText);
     }
