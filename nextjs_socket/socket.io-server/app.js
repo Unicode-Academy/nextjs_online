@@ -8,12 +8,20 @@ const io = new Server(httpServer, {
     origin: "http://localhost:3000",
   },
 });
-
+const messages = [];
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("message", (data) => {
-    console.log(data);
-    socket.emit("new-message", "Hello from server");
+
+  socket.on("send-message", (data) => {
+    if (!data) {
+      return;
+    }
+    messages.push(data);
+    socket.broadcast.emit("new-message", messages);
+  });
+
+  socket.on("load-message", () => {
+    socket.emit("new-message", messages);
   });
 
   socket.on("disconnect", () => {
