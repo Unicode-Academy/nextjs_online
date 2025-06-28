@@ -4,7 +4,11 @@ import { io } from "socket.io-client";
 // const SOCKET_URL = "http://localhost:3000";
 export default function SocketNamespace() {
   useEffect(() => {
-    const socket = io();
+    const socket = io({
+      auth: {
+        token: "123",
+      },
+    });
     console.log(socket);
 
     socket.on("connect", () => {
@@ -13,6 +17,10 @@ export default function SocketNamespace() {
       socket.on("new-notification", (data) => {
         console.log(data);
       });
+    });
+
+    socket.on("connect_error", (err) => {
+      console.log(err.message); // prints the message associated with the error
     });
   }, []);
   return <div>SocketNamespace</div>;

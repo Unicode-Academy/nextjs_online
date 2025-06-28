@@ -12,11 +12,18 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   });
   const io = new Server(server, {});
+  io.use((socket, next) => {
+    // console.log(socket.handshake.auth.token);
 
+    // next(new Error("unauthorized"));
+
+    next();
+  });
   io.on("connection", (socket) => {
     console.log("a user connected", socket.id);
     socket.on("send-notification", (data) => {
       console.log(data);
+      console.log(socket.handshake.auth.token);
       socket.emit("new-notification", data);
     });
   });
