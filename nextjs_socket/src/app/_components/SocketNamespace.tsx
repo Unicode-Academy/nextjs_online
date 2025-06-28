@@ -1,10 +1,12 @@
 "use client";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
-const SOCKET_URL = "http://localhost:3001";
+// const SOCKET_URL = "http://localhost:3000";
 export default function SocketNamespace() {
   useEffect(() => {
-    const socket = io(`${SOCKET_URL}/notification`);
+    const socket = io();
+    console.log(socket);
+
     socket.on("connect", () => {
       console.log("Client Notification connected");
       socket.emit("send-notification", "Thông báo mới");
