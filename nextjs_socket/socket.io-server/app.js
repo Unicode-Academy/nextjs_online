@@ -17,11 +17,23 @@ io.on("connection", (socket) => {
       return;
     }
     messages.push(data);
-    socket.broadcast.emit("new-message", messages);
+    // socket.broadcast.emit("new-message", messages);
+    socket.to("room-chat").emit("new-message", messages);
+    socket.emit("new-message", messages);
   });
 
   socket.on("load-message", () => {
     socket.emit("new-message", messages);
+  });
+
+  socket.on("join", () => {
+    socket.join("room-chat");
+    socket.emit("joined");
+  });
+
+  socket.on("leave", () => {
+    socket.leave("room-chat");
+    socket.emit("left");
   });
 
   socket.on("disconnect", () => {
