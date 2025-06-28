@@ -8,6 +8,7 @@ const io = new Server(httpServer, {
     origin: "http://localhost:3000",
   },
 });
+
 const messages = [];
 io.on("connection", (socket) => {
   console.log("a user connected");
@@ -38,6 +39,13 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("a user disconnected");
+  });
+});
+
+io.of("notification").on("connection", (socket) => {
+  console.log("notification connected");
+  socket.on("send-notification", (data) => {
+    socket.broadcast.emit("new-notification", data);
   });
 });
 
