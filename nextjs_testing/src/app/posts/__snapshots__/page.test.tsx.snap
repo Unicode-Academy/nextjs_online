@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Posts render posts page unchanged 1`] = `
+<div>
+  <div>
+    <h1>
+      Posts
+    </h1>
+    <h2>
+      Ahihi
+    </h2>
+    <div>
+      <h2
+        data-testid="post-title"
+      >
+        Learn ReactJS
+      </h2>
+      <p
+        data-testid="post-body"
+      >
+        Detail Learn ReactJS
+      </p>
+    </div>
+    <div>
+      <h2
+        data-testid="post-title"
+      >
+        Learn NextJS
+      </h2>
+      <p
+        data-testid="post-body"
+      >
+        Detail Learn NextJS
+      </p>
+    </div>
+  </div>
+</div>
+`;

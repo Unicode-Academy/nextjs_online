@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import TodoItem from "./TodoItem";
 
 export default function TodoList() {
   const [value, setValue] = useState<string>("");
@@ -15,9 +16,7 @@ export default function TodoList() {
       <h1>TodoList</h1>
       <ul data-testid="todo-list">
         {todoList.map((todo, index) => (
-          <li key={index} data-testid="todo-item">
-            {todo}
-          </li>
+          <TodoItem key={index} todo={todo} />
         ))}
       </ul>
       <form data-testid="todo-form" onSubmit={handleSubmit}>
