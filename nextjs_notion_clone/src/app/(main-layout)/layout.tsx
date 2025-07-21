@@ -1,4 +1,5 @@
 import Footer from "./_components/Footer";
+import Header from "./_components/Header";
 
 export default function MainLayout({
   children,
@@ -7,6 +8,7 @@ export default function MainLayout({
 }) {
   return (
     <div className="h-full">
+      <Header />
       {children}
       <Footer />
     </div>
