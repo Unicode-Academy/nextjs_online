@@ -7,7 +7,13 @@ export default function Hero() {
         <Image
           src={`/documents.png`}
           alt="Documents"
-          className="object-contain max-w-full"
+          className="object-contain max-w-full dark:hidden"
+          fill
+        />
+        <Image
+          src={`/documents-dark.png`}
+          alt="Documents"
+          className="object-contain max-w-full hidden dark:block"
           fill
         />
       </div>
@@ -15,7 +21,13 @@ export default function Hero() {
         <Image
           src={`/reading.png`}
           alt="Reading"
-          className="object-contain max-w-full"
+          className="object-contain max-w-full dark:hidden"
+          fill
+        />
+        <Image
+          src={`/reading-dark.png`}
+          alt="Reading"
+          className="object-contain max-w-full hidden dark:block"
           fill
         />
       </div>
