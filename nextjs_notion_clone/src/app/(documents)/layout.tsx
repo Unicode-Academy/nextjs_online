@@ -8,7 +8,7 @@ export default function DocumentsLayout({
   return (
     <div className="flex h-full">
       <Navigation />
-      <main className="h-full flex-1">{children}</main>
+      <main className="h-full flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 }
