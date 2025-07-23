@@ -1,5 +1,5 @@
 "use client";
-import LoadingSpinner from "@/app/_components/LoadingSpinner";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { useConvexAuth } from "convex/react";
 import { ArrowRight } from "lucide-react";

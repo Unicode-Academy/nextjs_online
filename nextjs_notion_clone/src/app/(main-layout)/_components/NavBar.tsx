@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
-import LoadingSpinner from "@/app/_components/LoadingSpinner";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function NavBar() {
   const { isAuthenticated, isLoading } = useConvexAuth();
