@@ -3,19 +3,20 @@ import { cn } from "@/lib/utils";
 import { useConvexAuth } from "convex/react";
 import { ChevronsLeft } from "lucide-react";
 import { AlignJustify } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
+  const sidebarWidthRef = useRef<number>(0);
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [toggle, setToggle] = useState<boolean>(isMobile);
 
   const handleMouseMove = (e: MouseEvent) => {
     let x = e.clientX;
-    if (x < 250) {
-      x = 250;
+    if (x < sidebarWidthRef.current) {
+      x = sidebarWidthRef.current;
     }
     if (x > 500) {
       x = 500;
@@ -40,6 +41,9 @@ export default function Navigation() {
     if (sidebarRef.current) {
       sidebarRef.current.style.transition = "";
     }
+    if (navbarRef.current) {
+      navbarRef.current.style.transition = "";
+    }
   };
   const handleToggleSidebar = () => {
     if (sidebarRef.current) {
@@ -51,8 +55,9 @@ export default function Navigation() {
 
     if (navbarRef.current) {
       navbarRef.current.style.left = "20px";
+      navbarRef.current.style.transition = `all 0.3s ease-in-out`;
       if (isMobile) {
-        navbarRef.current.style.width = "";
+        navbarRef.current.style.width = `100%`;
       }
     }
 
@@ -61,18 +66,20 @@ export default function Navigation() {
 
   const handleResetSidebar = () => {
     if (navbarRef.current) {
-      navbarRef.current.style.left = isMobile ? "100%" : "250px";
+      navbarRef.current.style.left = isMobile
+        ? "100%"
+        : `${sidebarWidthRef.current}px`;
       if (isMobile) {
         navbarRef.current.style.width = "0";
       } else {
-        navbarRef.current.style.width = "calc(100% - 250px)";
+        navbarRef.current.style.width = `calc(100% - ${sidebarWidthRef.current}px)`;
       }
     }
     if (sidebarRef.current) {
       if (isMobile) {
         sidebarRef.current.style.width = "100%";
       } else {
-        sidebarRef.current.style.width = "250px";
+        sidebarRef.current.style.width = `${sidebarWidthRef.current}px`;
       }
 
       sidebarRef.current.style.paddingLeft = "";
@@ -80,6 +87,11 @@ export default function Navigation() {
     }
     setToggle(!toggle);
   };
+
+  useEffect(() => {
+    sidebarWidthRef.current = sidebarRef.current?.clientWidth || 0;
+  }, [isLoading]);
+
   if (isLoading) {
     return;
   }
@@ -113,16 +125,18 @@ export default function Navigation() {
       <div
         ref={navbarRef}
         className={cn(
-          "w-[calc(100%-250px)] absolute top-0 py-5 flex",
-          isMobile ? "left-5 w-full" : "left-[250px]"
+          "w-[calc(100%-250px)] absolute top-0 py-5 flex z-[9999]",
+          isMobile ? "left-5 w-auto" : "left-[250px]"
         )}
       >
-        {(toggle || isMobile) && (
-          <div className="cursor-pointer" onClick={handleResetSidebar}>
-            <AlignJustify />
-          </div>
+        {toggle && (
+          <>
+            <div className="cursor-pointer" onClick={handleResetSidebar}>
+              <AlignJustify />
+            </div>
+            <div>Tiêu đề</div>
+          </>
         )}
-        <div>Tiêu đề</div>
       </div>
     </>
   );
