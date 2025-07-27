@@ -1,10 +1,11 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { useConvexAuth } from "convex/react";
-import { ChevronsLeft } from "lucide-react";
+import { ChevronsLeft, User2Icon } from "lucide-react";
 import { AlignJustify } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import UserItem from "./UserItem";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
@@ -101,16 +102,16 @@ export default function Navigation() {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar bg-[#efefef] h-full p-3 relative overflow-x-hidden z-[9999]",
+          "group/sidebar bg-[#efefef] dark:bg-secondary h-full relative overflow-x-hidden z-[9999]",
           isMobile
             ? "w-0 px-0 transition-all duration-300 ease-in-out"
             : "w-[250px]"
         )}
       >
-        <p>Navigation</p>
+        <UserItem />
         <div
           className={cn(
-            "absolute right-[5px] top-5 cursor-pointer hover:bg-gray-300 rounded-sm text-[#999] group-hover/sidebar:opacity-100 transition-all duration-300",
+            "absolute right-[5px] top-3 cursor-pointer hover:bg-gray-300 rounded-sm text-[#999] group-hover/sidebar:opacity-100 transition-all duration-300",
             isMobile ? "opacity-100" : "opacity-0"
           )}
           onClick={handleToggleSidebar}
@@ -119,7 +120,7 @@ export default function Navigation() {
         </div>
         <div
           onMouseDown={handleMouseDown}
-          className="group-hover/sidebar:opacity-100 absolute w-[4px] bg-gray-300 h-full right-0 top-0 opacity-0 transition-all duration-300 cursor-ew-resize"
+          className="group-hover/sidebar:opacity-100 absolute w-[4px] bg-gray-300 dark:bg-gray-600 h-full right-0 top-0 opacity-0 transition-all duration-300 cursor-ew-resize"
         ></div>
       </aside>
       <div
@@ -134,7 +135,6 @@ export default function Navigation() {
             <div className="cursor-pointer" onClick={handleResetSidebar}>
               <AlignJustify />
             </div>
-            <div>Tiêu đề</div>
           </>
         )}
       </div>
