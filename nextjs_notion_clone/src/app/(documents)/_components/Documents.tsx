@@ -6,10 +6,23 @@ import { useConvexAuth } from "convex/react";
 import Image from "next/image";
 import { CirclePlus } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-
+import { toast } from "sonner";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 export default function Documents() {
   const { isLoading } = useConvexAuth();
   const { user } = useUser();
+  const mutateDocument = useMutation(api.documents.create);
+  const handleCreate = () => {
+    const promise = mutateDocument({
+      title: "Untitled",
+    });
+    toast.promise(promise, {
+      loading: "Creating a note...",
+      success: "Note created successfully",
+      error: "Failed to create note",
+    });
+  };
   if (isLoading) {
     return (
       <div className="h-full flex w-full justify-center items-center">
@@ -38,7 +51,7 @@ export default function Documents() {
       <h2 className="text-lg font-medium mb-3">
         Welcome to {user?.fullName}&apos;s Jotion
       </h2>
-      <Button className="rounded-[5px] cursor-pointer">
+      <Button className="rounded-[5px] cursor-pointer" onClick={handleCreate}>
         <CirclePlus />
         Create a note
       </Button>

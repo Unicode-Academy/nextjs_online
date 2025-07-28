@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
 const inter = Inter({ subsets: ["latin"] });
+import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "jotion",
   description: "The connected workspace where better, faster work happens.",
@@ -35,7 +36,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            {children}
+            <Toaster position="bottom-center" />
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>

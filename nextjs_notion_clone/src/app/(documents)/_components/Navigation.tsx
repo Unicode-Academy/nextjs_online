@@ -6,6 +6,8 @@ import { AlignJustify } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import UserItem from "./UserItem";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
@@ -13,7 +15,7 @@ export default function Navigation() {
   const sidebarWidthRef = useRef<number>(0);
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [toggle, setToggle] = useState<boolean>(isMobile);
-
+  const documents = useQuery(api.documents.get);
   const handleMouseMove = (e: MouseEvent) => {
     let x = e.clientX;
     if (x < sidebarWidthRef.current) {
@@ -109,6 +111,12 @@ export default function Navigation() {
         )}
       >
         <UserItem />
+        {documents?.map((document) => (
+          <div key={document._id} className="mb-3 px-3">
+            {document.title}
+          </div>
+        ))}
+
         <div
           className={cn(
             "absolute right-[5px] top-3 cursor-pointer hover:bg-gray-300 rounded-sm text-[#999] group-hover/sidebar:opacity-100 transition-all duration-300",
