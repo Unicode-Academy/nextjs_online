@@ -1,13 +1,21 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useConvexAuth } from "convex/react";
-import { ChevronsLeft, User2Icon } from "lucide-react";
+import { useConvexAuth, useMutation } from "convex/react";
+import {
+  ChevronsLeft,
+  PlusCircle,
+  Search,
+  Settings,
+  User2Icon,
+} from "lucide-react";
 import { AlignJustify } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import UserItem from "./UserItem";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import Item from "./Item";
+import { toast } from "sonner";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
@@ -16,6 +24,7 @@ export default function Navigation() {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [toggle, setToggle] = useState<boolean>(isMobile);
   const documents = useQuery(api.documents.get);
+  const mutateDocument = useMutation(api.documents.create);
   const handleMouseMove = (e: MouseEvent) => {
     let x = e.clientX;
     if (x < sidebarWidthRef.current) {
@@ -91,6 +100,17 @@ export default function Navigation() {
     setToggle(!toggle);
   };
 
+  const handleCreate = () => {
+    const promise = mutateDocument({
+      title: "Untitled",
+    });
+    toast.promise(promise, {
+      loading: "Creating a note...",
+      success: "Note created successfully",
+      error: "Failed to create note",
+    });
+  };
+
   useEffect(() => {
     sidebarWidthRef.current = sidebarRef.current?.clientWidth || 0;
   }, [isLoading]);
@@ -111,8 +131,12 @@ export default function Navigation() {
         )}
       >
         <UserItem />
+        <Item label="New page" icon={PlusCircle} onClick={handleCreate} />
+        <Item label="Search" icon={Search} isSearch />
+        <Item label="Settings" icon={Settings} />
+
         {documents?.map((document) => (
-          <div key={document._id} className="mb-3 px-3">
+          <div key={document._id} className="mt-3 px-3">
             {document.title}
           </div>
         ))}
