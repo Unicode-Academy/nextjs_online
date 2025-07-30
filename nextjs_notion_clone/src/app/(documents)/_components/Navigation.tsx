@@ -1,21 +1,15 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { useConvexAuth, useMutation } from "convex/react";
-import {
-  ChevronsLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  User2Icon,
-} from "lucide-react";
+import { ChevronsLeft, PlusCircle, Search, Settings } from "lucide-react";
 import { AlignJustify } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import UserItem from "./UserItem";
-import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import Item from "./Item";
 import { toast } from "sonner";
+import DocumentList from "./DocumentList";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
@@ -23,7 +17,6 @@ export default function Navigation() {
   const sidebarWidthRef = useRef<number>(0);
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [toggle, setToggle] = useState<boolean>(isMobile);
-  const documents = useQuery(api.documents.get);
   const mutateDocument = useMutation(api.documents.create);
   const handleMouseMove = (e: MouseEvent) => {
     let x = e.clientX;
@@ -135,11 +128,7 @@ export default function Navigation() {
         <Item label="Search" icon={Search} isSearch />
         <Item label="Settings" icon={Settings} />
 
-        {documents?.map((document) => (
-          <div key={document._id} className="mt-3 px-3">
-            {document.title}
-          </div>
-        ))}
+        <DocumentList />
 
         <div
           className={cn(
