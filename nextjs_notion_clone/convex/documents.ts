@@ -33,13 +33,18 @@ export const get = query({
     const userId = identity.subject;
     const documents = await ctx.db
       .query("documents")
-      .filter((q) => {
-        if (!args.parentDocument) {
-          return true;
-        }
-        return q.eq(q.field("parentDocument"), args.parentDocument);
+      // .filter((q) => {
+      //   if (!args.parentDocument) {
+      //     return true;
+      //   }
+      //   return q.eq(q.field("parentDocument"), args.parentDocument);
+      // })
+      // .filter((q) => q.eq(q.field("userId"), userId))
+      .withIndex("byUserAndParent", (q) => {
+        return q.eq("userId", userId).eq("parentDocument", args.parentDocument);
       })
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .filter((q) => q.eq(q.field("isArchived"), false))
+      .order("desc")
       .collect();
     return documents;
   },

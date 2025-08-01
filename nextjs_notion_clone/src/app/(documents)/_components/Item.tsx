@@ -1,6 +1,10 @@
 import { ChevronDown, LucideIcon, Plus } from "lucide-react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { ChevronRight } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 interface ItemProps {
   id?: Id<"documents">;
   label: string;
@@ -9,6 +13,7 @@ interface ItemProps {
   isSearch?: boolean;
   expanded?: boolean;
   onExpand?: () => void;
+  level?: number;
 }
 
 export default function Item({
@@ -19,16 +24,35 @@ export default function Item({
   id,
   expanded,
   onExpand,
+  level = 0,
 }: ItemProps) {
+  const mutateDocument = useMutation(api.documents.create);
   const ArrowIcon = expanded ? ChevronDown : ChevronRight;
+  const handleCreate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!id) {
+      return;
+    }
+    const promise = mutateDocument({
+      title: "Untitled",
+      parentDocument: id,
+    });
+    toast.promise(promise, {
+      loading: "Creating a note...",
+      success: "Note created successfully",
+      error: "Failed to create note",
+    });
+    onExpand?.();
+  };
   if (id) {
-    console.log(expanded);
+    console.log(`level ${level}`);
   }
 
   return (
     <div
       onClick={onClick}
-      className="flex gap-1 items-center py-1 text-muted-foreground px-3 cursor-pointer text-sm hover:bg-primary/5 my-1 font-medium"
+      className="flex gap-1 items-center py-1 text-muted-foreground pr-3 cursor-pointer text-sm hover:bg-primary/5 font-medium"
+      style={{ paddingLeft: `${level > 0 ? level * 16 + 16 : 16}px` }}
     >
       {id && (
         <div className="hover:bg-[#ccc] rounded-[5px]">
@@ -36,10 +60,10 @@ export default function Item({
         </div>
       )}
       <Icon size={18} />
-      {label}
+      <span className="truncate">{label}</span>
       {id && (
         <div className="hover:bg-[#ccc] rounded-[5px] ml-auto">
-          <Plus size={16} />
+          <Plus size={16} onClick={handleCreate} />
         </div>
       )}
       {isSearch && (
@@ -51,3 +75,12 @@ export default function Item({
     </div>
   );
 }
+
+Item.Skeleton = function SkeletonLoading() {
+  return (
+    <div className="flex gap-1 px-3">
+      <Skeleton className="h-[15px] w-[10px] rounded-[5px] bg-gray-200" />
+      <Skeleton className="h-[15px] w-[30%] rounded-[5px] bg-gray-200" />
+    </div>
+  );
+};

@@ -128,7 +128,9 @@ export default function Navigation() {
         <Item label="Search" icon={Search} isSearch />
         <Item label="Settings" icon={Settings} />
 
-        <DocumentList />
+        <div className="mt-3">
+          <DocumentList />
+        </div>
 
         <div
           className={cn(

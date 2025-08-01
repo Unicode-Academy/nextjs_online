@@ -25,14 +25,31 @@ export default function DocumentList({
       };
     });
   };
+  if (!documents) {
+    return (
+      <div
+        className="flex flex-col gap-2"
+        style={{ paddingLeft: `${level > 0 ? level * 18 + 18 : 18}px` }}
+      >
+        <Item.Skeleton />
+        {level === 0 && (
+          <div>
+            <Item.Skeleton />
+            <Item.Skeleton />
+          </div>
+        )}
+      </div>
+    );
+  }
   return (
-    <div className="mt-3">
+    <div className="mt-1">
       <p
         className={cn(
-          "px-8 text-sm text-muted-foreground mb-3",
-          expanded && "block",
+          "hidden text-sm text-muted-foreground mb-3 truncate",
+          expanded && "last:block",
           level === 0 && "hidden"
         )}
+        style={{ paddingLeft: `${level > 0 ? level * 18 + 18 : 18}px` }}
       >
         No pages inside
       </p>
@@ -45,6 +62,7 @@ export default function DocumentList({
               icon={File}
               expanded={expanded[document._id]}
               onExpand={() => handleExpand(document._id)}
+              level={level}
             />
             {expanded[document._id] && (
               <DocumentList level={level + 1} documentParent={document._id} />
