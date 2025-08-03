@@ -11,7 +11,7 @@ export const create = mutation({
       throw new Error("Unauthorized");
     }
     const userId = identity.subject;
-    ctx.db.insert("documents", {
+    return ctx.db.insert("documents", {
       title: args.title,
       userId,
       parentDocument: args.parentDocument,

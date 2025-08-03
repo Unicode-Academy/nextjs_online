@@ -9,13 +9,17 @@ import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { useRouter } from "next/navigation";
 export default function Documents() {
   const { isLoading } = useConvexAuth();
   const { user } = useUser();
   const mutateDocument = useMutation(api.documents.create);
+  const router = useRouter();
   const handleCreate = () => {
     const promise = mutateDocument({
       title: "Untitled",
+    }).then((documentId) => {
+      router.push(`/documents/${documentId}`);
     });
     toast.promise(promise, {
       loading: "Creating a note...",

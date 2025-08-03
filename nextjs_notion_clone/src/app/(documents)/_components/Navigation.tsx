@@ -10,6 +10,7 @@ import { api } from "../../../../convex/_generated/api";
 import Item from "./Item";
 import { toast } from "sonner";
 import DocumentList from "./DocumentList";
+import { useRouter } from "next/navigation";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
@@ -18,6 +19,7 @@ export default function Navigation() {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [toggle, setToggle] = useState<boolean>(isMobile);
   const mutateDocument = useMutation(api.documents.create);
+  const router = useRouter();
   const handleMouseMove = (e: MouseEvent) => {
     let x = e.clientX;
     if (x < sidebarWidthRef.current) {
@@ -96,6 +98,8 @@ export default function Navigation() {
   const handleCreate = () => {
     const promise = mutateDocument({
       title: "Untitled",
+    }).then((documentId) => {
+      router.push(`/documents/${documentId}`);
     });
     toast.promise(promise, {
       loading: "Creating a note...",

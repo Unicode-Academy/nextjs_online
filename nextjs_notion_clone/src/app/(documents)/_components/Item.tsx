@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 interface ItemProps {
   id?: Id<"documents">;
   label: string;
@@ -28,6 +29,11 @@ export default function Item({
 }: ItemProps) {
   const mutateDocument = useMutation(api.documents.create);
   const ArrowIcon = expanded ? ChevronDown : ChevronRight;
+  const router = useRouter();
+  const handleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onExpand?.();
+  };
   const handleCreate = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!id) {
@@ -42,7 +48,10 @@ export default function Item({
       success: "Note created successfully",
       error: "Failed to create note",
     });
-    onExpand?.();
+    if (!expanded) {
+      onExpand?.();
+    }
+    router.push(`/documents/${id}`);
   };
   if (id) {
     console.log(`level ${level}`);
@@ -56,7 +65,7 @@ export default function Item({
     >
       {id && (
         <div className="hover:bg-[#ccc] rounded-[5px]">
-          <ArrowIcon size={16} onClick={onExpand} />
+          <ArrowIcon size={16} onClick={handleExpand} />
         </div>
       )}
       <Icon size={18} />

@@ -5,6 +5,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 interface DocumentListProps {
   level?: number;
   documentParent?: Id<"documents">;
@@ -17,6 +18,7 @@ export default function DocumentList({
     parentDocument: documentParent,
   });
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const router = useRouter();
   const handleExpand = (id: string) => {
     setExpanded((prevExpended) => {
       return {
@@ -63,6 +65,9 @@ export default function DocumentList({
               expanded={expanded[document._id]}
               onExpand={() => handleExpand(document._id)}
               level={level}
+              onClick={() => {
+                router.push(`/documents/${document._id}`);
+              }}
             />
             {expanded[document._id] && (
               <DocumentList level={level + 1} documentParent={document._id} />
