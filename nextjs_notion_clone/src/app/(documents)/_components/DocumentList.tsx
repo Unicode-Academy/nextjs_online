@@ -14,7 +14,7 @@ export default function DocumentList({
   level = 0,
   documentParent,
 }: DocumentListProps) {
-  const documents = useQuery(api.documents.get, {
+  const documents = useQuery(api.documents.getSidebar, {
     parentDocument: documentParent,
   });
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});

@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
-import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { useUser } from "@clerk/nextjs";
 interface ItemProps {
   id?: Id<"documents">;
@@ -40,6 +39,7 @@ export default function Item({
   const ArrowIcon = expanded ? ChevronDown : ChevronRight;
   const router = useRouter();
   const { user } = useUser();
+  const archiveDocument = useMutation(api.documents.archive);
   const handleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     onExpand?.();
@@ -63,6 +63,22 @@ export default function Item({
     }
     router.push(`/documents/${id}`);
   };
+
+  const handleArchive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!id) {
+      return;
+    }
+    const promise = archiveDocument({ id }).then(() => {
+      router.push(`/documents`);
+    });
+    toast.promise(promise, {
+      loading: "Moving note...",
+      success: "Note moving to trash successfully",
+      error: "Failed to moving note",
+    });
+  };
+
   if (id) {
     console.log(`level ${level}`);
   }
@@ -86,8 +102,8 @@ export default function Item({
             <DropdownMenuTrigger>
               <Ellipsis className="cursor-pointer" size={14} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="right">
-              <DropdownMenuItem className="p-3 text-xs">
+            <DropdownMenuContent side="right" align="start" forceMount>
+              <DropdownMenuItem className="p-3 text-xs" onClick={handleArchive}>
                 <Trash size={14} />
                 Delete
               </DropdownMenuItem>
