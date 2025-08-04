@@ -1,3 +1,4 @@
+import { Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 export const create = mutation({
@@ -40,10 +41,30 @@ export const archive = mutation({
     if (existingDocument.userId !== userId) {
       throw new Error("Unauthorize");
     }
+
+    //Đệ quy
+    // - Lấy danh sách các note con
+    const recursiveDocument = async (id: Id<"documents">) => {
+      const children = await ctx.db
+        .query("documents")
+        .withIndex("byUserAndParent", (q) => {
+          return q.eq("userId", userId).eq("parentDocument", id);
+        })
+        .collect();
+      for (const child of children) {
+        await ctx.db.patch(child._id, {
+          isArchived: true,
+        });
+        await recursiveDocument(child._id);
+      }
+    };
+
     //Update
-    return ctx.db.patch(args.id, {
+    const document = await ctx.db.patch(args.id, {
       isArchived: true,
     });
+    await recursiveDocument(args.id); //Xóa tất cả con
+    return document;
   },
 });
 
