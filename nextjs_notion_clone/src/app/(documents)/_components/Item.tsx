@@ -1,4 +1,4 @@
-import { ChevronDown, LucideIcon, Plus } from "lucide-react";
+import { ChevronDown, LucideIcon, Plus, Trash } from "lucide-react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { ChevronRight } from "lucide-react";
 import { useMutation } from "convex/react";
@@ -6,6 +6,15 @@ import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Ellipsis } from "lucide-react";
+import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
+import { useUser } from "@clerk/nextjs";
 interface ItemProps {
   id?: Id<"documents">;
   label: string;
@@ -30,6 +39,7 @@ export default function Item({
   const mutateDocument = useMutation(api.documents.create);
   const ArrowIcon = expanded ? ChevronDown : ChevronRight;
   const router = useRouter();
+  const { user } = useUser();
   const handleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     onExpand?.();
@@ -60,7 +70,7 @@ export default function Item({
   return (
     <div
       onClick={onClick}
-      className="flex gap-1 items-center py-1 text-muted-foreground pr-3 cursor-pointer text-sm hover:bg-primary/5 font-medium"
+      className="group/item flex gap-1 items-center py-1 text-muted-foreground pr-3 cursor-pointer text-sm hover:bg-primary/5 font-medium"
       style={{ paddingLeft: `${level > 0 ? level * 16 + 16 : 16}px` }}
     >
       {id && (
@@ -71,7 +81,25 @@ export default function Item({
       <Icon size={18} />
       <span className="truncate">{label}</span>
       {id && (
-        <div className="hover:bg-[#ccc] rounded-[5px] ml-auto">
+        <div className="ml-auto flex items-center hover:bg-neutral-300 rounded-[3px] opacity-0 group-hover/item:opacity-100">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Ellipsis className="cursor-pointer" size={14} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right">
+              <DropdownMenuItem className="p-3 text-xs">
+                <Trash size={14} />
+                Delete
+              </DropdownMenuItem>
+              <p className="text-xs text-gray-600 border-t py-2 px-2">
+                Last edited by: {user?.fullName}
+              </p>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+      {id && (
+        <div className="hover:bg-[#ccc] rounded-[5px]">
           <Plus size={16} onClick={handleCreate} />
         </div>
       )}
