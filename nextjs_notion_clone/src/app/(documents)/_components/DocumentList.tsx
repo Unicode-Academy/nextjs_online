@@ -44,7 +44,7 @@ export default function DocumentList({
     );
   }
   return (
-    <div className="mt-1">
+    <>
       <p
         className={cn(
           "hidden text-sm text-muted-foreground mb-3 truncate",
@@ -75,7 +75,7 @@ export default function DocumentList({
           </div>
         );
       })}
-    </div>
+    </>
   );
 }
 

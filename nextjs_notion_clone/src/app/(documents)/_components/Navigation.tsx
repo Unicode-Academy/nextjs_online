@@ -1,7 +1,14 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { useConvexAuth, useMutation } from "convex/react";
-import { ChevronsLeft, PlusCircle, Search, Settings } from "lucide-react";
+import {
+  ChevronsLeft,
+  Plus,
+  PlusCircle,
+  Search,
+  Settings,
+  Trash,
+} from "lucide-react";
 import { AlignJustify } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -11,6 +18,12 @@ import Item from "./Item";
 import { toast } from "sonner";
 import DocumentList from "./DocumentList";
 import { useRouter } from "next/navigation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import Trashbox from "./Trashbox";
 export default function Navigation() {
   const { isLoading } = useConvexAuth();
   const sidebarRef = useRef<HTMLBaseElement>(null);
@@ -134,6 +147,18 @@ export default function Navigation() {
 
         <div className="mt-3">
           <DocumentList />
+          <Item label="Add a page" icon={Plus} onClick={handleCreate} />
+          <Popover>
+            <PopoverTrigger className="w-full mt-4">
+              <Item label="Trash" icon={Trash} />
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-72 p-0"
+              side={isMobile ? "bottom" : "right"}
+            >
+              <Trashbox />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div
